@@ -1,85 +1,28 @@
-# DIO Spring Boot - Final Project 05: Spring AI (budgeting)
+# Desafio DIO: API Inteligente com Spring AI
 
-## Introduction
+## 💡 O que o projeto faz
+Este projeto é uma API de orçamento pessoal inteligente. Ele recebe comandos de voz (áudio) enviados pelo cliente, transforma em texto, usa IA (OpenAI) para entender a intenção do usuário e usa *Tool Calling* para executar funções reais no sistema, como criar uma transação financeira no banco de dados, e no final retorna uma resposta em áudio.
 
-This final module applies Spring AI in a budgeting API while preserving the same layered architecture used across the track.
+## 🚀 Como executar a aplicação
+1. Tenha o Docker Desktop rodando na sua máquina.
+2. Configure sua chave da OpenAI no terminal: `set OPENAI_API_KEY=sua-chave-aqui` (no Windows PowerShell, use `$env:OPENAI_API_KEY="sua-chave-aqui"`)
+3. Rode o comando: `.\gradlew bootRun`
+4. O banco de dados MySQL subirá automaticamente via Docker Compose.
 
-The goal is to integrate AI capabilities without bypassing domain and use case boundaries.
+## 🛠️ Qual melhoria foi implementada
+**Validação de Regra de Negócio na Persistência de Transação**
+Foi adicionada uma trava de segurança na classe `PersistTransactionUseCase`. Agora, antes de salvar uma nova transação financeira no banco de dados a partir de um comando da IA, a API verifica se o valor da transação é menor ou igual a zero. Caso seja, uma `IllegalArgumentException` é lançada, impedindo a criação de dados financeiros inválidos pelo modelo de IA.
 
-## Code Context
+## 💻 Tecnologias utilizadas
+- Java 25+
+- Spring Boot
+- Spring AI (Integração com OpenAI)
+- Spring Data JPA
+- MySQL
+- Docker e Docker Compose
 
-The project processes voice commands to create and query financial transactions.
+## 🧪 Como testar o fluxo principal
+Basta enviar uma requisição HTTP POST para o endpoint da API passando um arquivo de áudio (ex: "gastei 50 reais com comida"). A API vai processar, validar (barrando valores negativos graças à nossa melhoria!) e salvar no MySQL.
 
-Primary flow:
-
-1. Client uploads an audio file.
-2. Audio is transcribed into text.
-3. The model selects an application tool/use case.
-4. The use case persists or queries transaction data.
-5. The final response is converted to audio.
-
-## Project Structure
-
-- `src/main/java/dio/budgeting/domain`
-  - Domain model and repository contract.
-- `src/main/java/dio/budgeting/application`
-  - Use cases used by both REST and AI tool calling.
-- `src/main/java/dio/budgeting/infrastructure`
-  - HTTP adapters, JPA adapters, and integration glue.
-
-## Module-Specific Topics
-
-### Speech-to-text
-
-- Uses `TranscriptionModel` for audio transcription.
-- Model settings are configured in `application.properties`.
-
-### Tool calling
-
-- `ChatClient` registers use-case tools.
-- `@Tool` methods expose business capabilities to the model.
-
-### Text-to-speech
-
-- `TextToSpeechModel` produces MP3 output from final text.
-- AI endpoint returns generated audio.
-
-## Spring AI Documentation
-
-- Spring AI Reference: https://docs.spring.io/spring-ai/reference/index.html
-- ChatModel API: https://docs.spring.io/spring-ai/reference/api/chatmodel.html
-- ChatClient API: https://docs.spring.io/spring-ai/reference/api/chatclient.html
-- Tools API: https://docs.spring.io/spring-ai/reference/api/tools.html
-- Audio Transcriptions API: https://docs.spring.io/spring-ai/reference/api/audio/transcriptions.html
-- Audio Speech API: https://docs.spring.io/spring-ai/reference/api/audio/speech.html
-
-## Shared Architecture References
-
-Common architecture concepts are documented in the root README:
-
-- [DDD layers](../README.md#ddd-layered-architecture)
-- [Class vs record](../README.md#java-class-vs-java-record-in-domain-modeling)
-- [Strong typed identifiers](../README.md#strong-typed-identifiers)
-- [Repository pattern](../README.md#repository-pattern)
-- [Use cases and Clean Architecture](../README.md#use-cases-and-clean-architecture)
-- [Docker Compose support](../README.md#docker-compose-support-in-development)
-
-## How to Run
-
-Set your OpenAI API key:
-
-```bash
-export OPENAI_API_KEY="your_api_key_here"
-```
-
-Run the application and tests:
-
-```bash
-./gradlew bootRun
-./gradlew test
-```
-
-## Notes
-
-- Educational final project focused on AI plus architectural discipline.
-- External provider integration tests may require active credentials.
+## 🧠 O que eu aprendi durante o desafio
+Neste projeto, eu aprendi como conectar uma Inteligência Artificial ao nosso código Java usando o Spring AI. Foi muito legal ver na prática a IA chamando funções do nosso sistema. Minha principal atuação foi achar onde o sistema salva a transação financeira (no arquivo PersistTransactionUseCase) e criar uma trava de segurança com o "if" para impedir que valores negativos ou igual a zero sejam salvos no banco. Também aprendi a subir o projeto com o Docker rodando tudo automático no fundo. Estou muito orgulhoso dessa trajetória!
