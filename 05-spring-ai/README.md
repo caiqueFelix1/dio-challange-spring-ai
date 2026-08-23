@@ -10,8 +10,10 @@ Este projeto é uma API de orçamento pessoal inteligente. Ele recebe comandos d
 4. O banco de dados MySQL subirá automaticamente via Docker Compose.
 
 ## 🛠️ Qual melhoria foi implementada
-**Validação de Regra de Negócio na Persistência de Transação**
+1. **Validação de Regra de Negócio na Persistência de Transação**
 Foi adicionada uma trava de segurança na classe `PersistTransactionUseCase`. Agora, antes de salvar uma nova transação financeira no banco de dados a partir de um comando da IA, a API verifica se o valor da transação é menor ou igual a zero. Caso seja, uma `IllegalArgumentException` é lançada, impedindo a criação de dados financeiros inválidos pelo modelo de IA.
+2. **Nova Ferramenta de Consulta de Saldo (`QueryBalanceByCategoryUseCase`):**
+   Criado um novo caso de uso anotado com `@Tool` para permitir que a Inteligência Artificial consulte e some de forma automatizada o saldo total de transações de uma categoria específica diretamente no banco de dados.
 
 ## 💻 Tecnologias utilizadas
 - Java 25+
